@@ -9,6 +9,7 @@
   <a href="#-quick-start">Quick Start</a> •
   <a href="#-vulnerability-categories">Categories</a> •
   <a href="#-ai-agents">Agents</a> •
+  <a href="#-use-with-cli-ai-tools">AI Tools</a> •
   <a href="#-tools--scripts">Tools</a> •
   <a href="#-payloads">Payloads</a> •
   <a href="#-contributing">Contributing</a>
@@ -224,6 +225,202 @@ The kit includes **7 specialized AI agents** for autonomous hunting:
 | **SSRF Hunter** | SSRF + cloud metadata, IAM escalation chain | Load when: SSRF hunting |
 | **Report Writer** | Report author with platform-specific formatting | Load when: writing/submitting reports |
 | **Validation Agent** | 7-Question Gate validator, enforces quality | Load when: validating findings |
+
+## Use with CLI AI Tools
+
+This toolkit is designed to work with AI-powered CLI tools. Load the skill files as context and let the AI guide your hunting.
+
+### Supported Tools
+
+| Tool | Install | How to Use |
+|------|---------|------------|
+| **OpenCode** | `npm i -g opencode` | `opencode` then load skill files as context |
+| **Claude Code** | `npm i -g @anthropic-ai/claude-code` | `claude` then paste agent/skill content |
+| **Gemini CLI** | `npm i -g @google/gemini-cli` | `gemini` then reference skill files |
+| **Aider** | `pip install aider-chat` | `aider` with skill files as reference |
+| **Cursor** | Download from cursor.sh | Open skill files in editor, use AI chat |
+
+### Step-by-Step: Using OpenCode
+
+```bash
+# 1. Install OpenCode
+npm i -g opencode
+
+# 2. Navigate to the toolkit
+cd BugBounty-Arsenal
+
+# 3. Start OpenCode
+opencode
+
+# 4. Load the autopilot agent
+# Paste the contents of agents/autopilot-agent.md into the chat
+
+# 5. Start hunting
+# Tell the AI: "Hunt XSS vulnerabilities on https://target.com"
+# The AI will load skills/hunting/xss/SKILL.md and guide you
+```
+
+### Step-by-Step: Using Claude Code
+
+```bash
+# 1. Install Claude Code
+npm i -g @anthropic-ai/claude-code
+
+# 2. Navigate to the toolkit
+cd BugBounty-Arsenal
+
+# 3. Start Claude
+claude
+
+# 4. Load context
+# Type: "Read agents/recon-agent.md and follow it for target.com"
+
+# 5. The AI will:
+# - Run subdomain enumeration
+# - Probe for live hosts
+# - Scan ports
+# - Collect URLs
+# - Analyze JavaScript files
+# - Return structured results
+```
+
+### Step-by-Step: Using Gemini CLI
+
+```bash
+# 1. Install Gemini CLI
+npm i -g @google/gemini-cli
+
+# 2. Navigate to the toolkit
+cd BugBounty-Arsenal
+
+# 3. Start Gemini
+gemini
+
+# 4. Load an agent
+# Paste agents/ssrf-hunter.md content
+
+# 5. Start SSRF testing
+# Tell the AI: "Test https://target.com/fetch?url= for SSRF"
+```
+
+### Workflow Example: Full Hunt with AI
+
+```bash
+# 1. Start your AI tool
+opencode  # or claude, gemini, aider
+
+# 2. Load the autopilot agent
+# Paste agents/autopilot-agent.md
+
+# 3. Give the target
+> Hunt https://target.com - full scope
+
+# 4. AI will automatically:
+Phase 1: Check scope
+Phase 2: Run recon (subfinder, httpx, naabu, etc.)
+Phase 3: Map and rank targets
+Phase 4: Test vulnerability classes
+Phase 5: Validate findings with 7-Question Gate
+Phase 6: Generate reports
+
+# 5. Review findings
+> Show me the XSS findings
+> Generate a report for the IDOR vulnerability
+> Validate this finding against the 7-Question Gate
+```
+
+### Using Individual Skills
+
+```bash
+# Load any skill file as context for targeted hunting
+
+# XSS hunting
+> Read skills/hunting/xss/SKILL.md and test the search parameter
+
+# SQL injection
+> Read skills/hunting/sqli/SKILL.md and test all input fields
+
+# SSRF with cloud metadata
+> Read skills/hunting/ssrf/SKILL.md and test for AWS metadata access
+
+# IDOR testing
+> Read skills/hunting/idor/SKILL.md and test user profile endpoints
+
+# JWT attacks
+> Read skills/hunting/jwt-oauth/SKILL.md and test the authentication flow
+```
+
+### Using Payloads
+
+```bash
+# Load the payload library for any vulnerability type
+
+> Read skills/payloads/SKILL.md and give me XSS payloads for attribute context
+
+> Read skills/payloads/SKILL.md and give me SSRF bypass techniques
+
+> Read skills/payloads/SKILL.md and give me SQLi WAF bypass payloads
+```
+
+### Using Dorks
+
+```bash
+# Load dork collections for reconnaissance
+
+> Read dorks/google-dorks.md and find exposed admin panels on target.com
+
+> Read dorks/github-dorks.md and search for leaked API keys
+
+> Read dorks/shodan-dorks.md and find exposed services
+```
+
+### AI-Assisted Report Writing
+
+```bash
+# Use the report writer agent
+
+> Read agents/report-writer.md and write a report for this XSS vulnerability:
+> - Endpoint: https://target.com/search?q=
+> - Payload: <script>alert(1)</script>
+> - Impact: Cookie theft, session hijacking
+
+# The AI will generate a formatted report for HackerOne/Bugcrowd/Intigriti
+```
+
+### Tips for AI-Assisted Hunting
+
+1. **Start with recon** — Load `agents/recon-agent.md` first to map the attack surface
+2. **Be specific** — Say "test XSS in the search parameter" not "find bugs"
+3. **Load relevant skills** — Each vulnerability class has its own SKILL.md
+4. **Validate findings** — Always run the 7-Question Gate before submitting
+5. **Chain bugs** — Combine low-severity findings for higher impact
+6. **Use payloads** — The `skills/payloads/SKILL.md` has 100+ ready-to-use payloads
+7. **Follow methodology** — Read `skills/hunting/methodology/METHODOLOGY.md` for the full workflow
+
+### Example Prompts
+
+```
+# Recon
+"Run full recon on target.com using the recon agent"
+"Enumerate all subdomains of target.com"
+"Find all JavaScript files and extract endpoints"
+
+# Vulnerability Testing
+"Test for IDOR on all user profile endpoints"
+"Check for SSRF in all URL parameters"
+"Test JWT authentication for algorithm confusion"
+"Scan for XSS in search, comments, and profile fields"
+
+# Validation
+"Validate this finding against the 7-Question Gate"
+"Is this XSS finding exploitable for account takeover?"
+"Calculate CVSS score for this IDOR vulnerability"
+
+# Reporting
+"Write a HackerOne report for this SQL injection"
+"Generate a PoC curl command for this SSRF"
+"Create a step-by-step reproduction guide"
+```
 
 ## Tools & Scripts
 
