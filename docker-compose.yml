@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  bugbounty:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bugbounty-kit
+    volumes:
+      - ./workspace:/workspace
+      - ./tools:/workspace/tools
+      - ./wordlists:/workspace/wordlists
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    environment:
+      - TERM=xterm-256color
+    entrypoint: /bin/bash
+
+  recon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bugbounty-recon
+    volumes:
+      - ./workspace:/workspace
+      - ./tools:/workspace/tools
+    working_dir: /workspace
+    network_mode: host
+    cap_add:
+      - NET_RAW
+    entrypoint: ["/bin/bash", "/workspace/bugbounty-kit/tools/scripts/recon_full.sh"]
